@@ -1,0 +1,18 @@
+deb http://mirrors.hustunique.com/debian/ wheezy main contrib non-free
+deb-src http://mirrors.hustunique.com/debian/ wheezy main contrib non-free
+
+deb http://ftp.cn.debian.org/debian/ wheezy main contrib non-free
+deb-src http://ftp.cn.debian.org/debian/ wheezy main contrib non-free
+
+deb http://ftp.cn.debian.org/debian/ wheezy-proposed-updates main contrib non-free
+deb-src http://ftp.cn.debian.org/debian/ wheezy-proposed-updates main contrib non-free
+
+deb http://ftp.cn.debian.org/debian/ wheezy-backports main contrib non-free
+deb-src http://ftp.cn.debian.org/debian/ wheezy-backports main contrib non-free
+
+# debian security updates
+deb http://security.debian.org/ wheezy/updates main contrib non-free
+deb-src http://security.debian.org/ wheezy/updates main contrib non-free
+
+# multimedia
+deb http://deb-multimedia.org wheezy main non-free
