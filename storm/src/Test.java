@@ -48,8 +48,6 @@ import java.net.InetAddress;
  */
 public class Test {
 
-    //static long startTime = 0;
-	//static long endTime = 0;
 
 	public static class MyBolt extends BaseRichBolt {
 		OutputCollector _collector;
@@ -71,7 +69,6 @@ public class Test {
 			if (tuple.getString(0).charAt(0) == 'q') {
 				ip.noMore();
 				MyBolt.endTime=System.currentTimeMillis();
-				//Test.endTime=System.currentTimeMillis(); 				
 			}
 		}
 
@@ -161,8 +158,7 @@ public class Test {
 		LocalCluster cluster = new LocalCluster();
 		cluster.submitTopology("test", conf, builder.createTopology());
 
-        MyBolt.startTime=System.currentTimeMillis();   //获取开始时间
-		//Test.startTime=System.currentTimeMillis();
+        	MyBolt.startTime=System.currentTimeMillis();   //获取开始时间
 
 		while(MyBolt.ip.isMore()) {
 			Utils.sleep(4000);
