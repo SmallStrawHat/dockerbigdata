@@ -48,9 +48,14 @@ import java.net.InetAddress;
  */
 public class Test {
 
+    //static long startTime = 0;
+	//static long endTime = 0;
+
 	public static class MyBolt extends BaseRichBolt {
 		OutputCollector _collector;
 		static TopIP ip = new TopIP();
+		static long startTime = 0;
+		static long endTime = 0;
 
 		@Override
 		public void prepare(Map conf, TopologyContext context, OutputCollector collector) {
@@ -63,8 +68,10 @@ public class Test {
 			//			"================ " + tuple.getValues() + " ============="));
 			//_collector.ack(tuple);
 			ip.putIP(ip.getIPFromString(tuple.getString(0)));
-			if (tuple.getString(0).compareTo("q") == 0) {
+			if (tuple.getString(0).charAt(0) == 'q') {
 				ip.noMore();
+				MyBolt.endTime=System.currentTimeMillis();
+				//Test.endTime=System.currentTimeMillis(); 				
 			}
 		}
 
@@ -79,6 +86,7 @@ public class Test {
 	public static class TopIP {
 		private Map<String, Integer> map;
 		private boolean more;
+		
 
 		public TopIP() {
 			map = new HashMap<String, Integer>();
@@ -144,17 +152,29 @@ public class Test {
 		builder.setSpout("kafka", new KafkaSpout(spoutConfig));
 		builder.setBolt("bolt", new MyBolt()).shuffleGrouping("kafka");
 
+
+
+		//以本地模式运行的代码
 		Config conf = new Config();
 		conf.setDebug(true);
 
 		LocalCluster cluster = new LocalCluster();
 		cluster.submitTopology("test", conf, builder.createTopology());
 
+        MyBolt.startTime=System.currentTimeMillis();   //获取开始时间
+		//Test.startTime=System.currentTimeMillis();
+
 		while(MyBolt.ip.isMore()) {
 			Utils.sleep(4000);
 		}
+
+                
 		cluster.killTopology("test");
 		cluster.shutdown();
+
+
+		long temp = MyBolt.endTime-MyBolt.startTime;
+		System.out.println(temp);
 		for(Entry<String, Integer> entry: MyBolt.ip.getTopIP().entrySet()) {
 			System.out.println(entry.getKey() + "\t:"+entry.getValue());
 		}
