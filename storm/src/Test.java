@@ -48,12 +48,15 @@ import java.net.InetAddress;
  */
 public class Test {
 
+    //static long startTime = 0;
+	//static long endTime = 0;
 
 	public static class MyBolt extends BaseRichBolt {
 		OutputCollector _collector;
 		static TopIP ip = new TopIP();
 		static long startTime = 0;
 		static long endTime = 0;
+		static long time = 0;
 
 		@Override
 		public void prepare(Map conf, TopologyContext context, OutputCollector collector) {
@@ -65,10 +68,17 @@ public class Test {
 			//_collector.emit(tuple, new Values(
 			//			"================ " + tuple.getValues() + " ============="));
 			//_collector.ack(tuple);
+			MyBolt.startTime=System.currentTimeMillis();
 			ip.putIP(ip.getIPFromString(tuple.getString(0)));
+			MyBolt.endTime=System.currentTimeMillis();
+
+			MyBolt.time += (MyBolt.endTime-MyBolt.startTime);
+			
+			System.out.println(MyBolt.endTime-MyBolt.startTime);
 			if (tuple.getString(0).charAt(0) == 'q') {
 				ip.noMore();
-				MyBolt.endTime=System.currentTimeMillis();
+				//MyBolt.endTime=System.currentTimeMillis();
+				//Test.endTime=System.currentTimeMillis(); 				
 			}
 		}
 
@@ -158,7 +168,8 @@ public class Test {
 		LocalCluster cluster = new LocalCluster();
 		cluster.submitTopology("test", conf, builder.createTopology());
 
-        	MyBolt.startTime=System.currentTimeMillis();   //获取开始时间
+        //MyBolt.startTime=System.currentTimeMillis();   //获取开始时间
+		//Test.startTime=System.currentTimeMillis();
 
 		while(MyBolt.ip.isMore()) {
 			Utils.sleep(4000);
@@ -169,8 +180,9 @@ public class Test {
 		cluster.shutdown();
 
 
-		long temp = MyBolt.endTime-MyBolt.startTime;
-		System.out.println(temp);
+		//long temp = MyBolt.endTime-MyBolt.startTime;
+		//System.out.println(temp);
+		System.out.println(MyBolt.time);
 		for(Entry<String, Integer> entry: MyBolt.ip.getTopIP().entrySet()) {
 			System.out.println(entry.getKey() + "\t:"+entry.getValue());
 		}
